@@ -15,3 +15,18 @@ Prompt 2:
 
  Prompt 6 
  I still cant seem to get the game started. It loads up on the game over screen prompting to press R to restart but it doesn't do anything.
+
+ Promt 7 
+ I got it to work. The only bug im seeing consistently is to start a new game. I was able to consistly repeat the bug. The new game only starts when R and W,S,or down arrow is pressed simultaneously. How can this be fixed? To be clear, when losing a game the R key does correctly clear the screen back the beginning it just doesnt start a new game by itself.
+
+ Promt 8 
+ I cant seem to get the game to start now. Unlike before it does not start wehn pressing any keys or combination of keys
+
+ Prompt 9 
+ Okay now R restarts the game but it instantly ends and to prevent that, I have to quickly press a directional key to move at the same time the game starts. There also seems to be a bug where if conflicting directional keys are pressed in quick succession the game ends almost like theres a collision happening
+
+ Prompt 10
+ the game still instantly ends after pressing R. it loads up like it wants to start but instantly ends
+
+ Prompt 11
+Could you add a start button when the program first runs then after each game after pressing R for the rest it brings you back to the screen with a start button?

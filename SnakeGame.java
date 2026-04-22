@@ -25,7 +25,12 @@ public class SnakeGame {
         private static final int DOWN = 1;
         private static final int LEFT = 2;
         private static final int UP = 3;
+        private static final int START = 0;
+        private static final int PLAYING = 1;
+        private static final int GAME_OVER = 2;
         private int direction = RIGHT;
+        private int nextDirection = RIGHT;
+        private int gameState = START;
         private Point food;
         private Random random;
         private boolean running = true;
@@ -33,9 +38,9 @@ public class SnakeGame {
 
         public GamePanel() {
             snake = new ArrayList<>();
-            snake.add(new Point(8, 10));
+            snake.add(new Point(10, 10)); // head
             snake.add(new Point(9, 10));
-            snake.add(new Point(10, 10));
+            snake.add(new Point(8, 10));
             random = new Random();
             spawnFood();
             timer = new javax.swing.Timer(150, this);
@@ -43,7 +48,13 @@ public class SnakeGame {
             addKeyListener(this);
             addMouseListener(this);
             requestFocusInWindow();
+            repaint();
+        }
+
+        private void startGame() {
+            gameState = PLAYING;
             timer.start();
+            requestFocusInWindow();
         }
 
         private void spawnFood() {
@@ -55,6 +66,7 @@ public class SnakeGame {
         }
 
         private void move() {
+            direction = nextDirection;
             Point head = snake.get(0);
             int newX = head.x;
             int newY = head.y;
@@ -89,20 +101,23 @@ public class SnakeGame {
         private void gameOver() {
             running = false;
             timer.stop();
+            gameState = GAME_OVER;
             repaint();
         }
 
         private void reset() {
             snake.clear();
-            snake.add(new Point(8, 10));
+            snake.add(new Point(10, 10)); // head
             snake.add(new Point(9, 10));
-            snake.add(new Point(10, 10));
+            snake.add(new Point(8, 10));
             direction = RIGHT;
+            nextDirection = RIGHT;
             score = 0;
             spawnFood();
             running = true;
-            timer.start();
+            gameState = START;
             requestFocusInWindow();
+            repaint();
         }
 
         @Override
@@ -115,25 +130,29 @@ public class SnakeGame {
         @Override
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
-            if (running) {
-                if (key == KeyEvent.VK_RIGHT && direction != LEFT) {
-                    direction = RIGHT;
-                } else if (key == KeyEvent.VK_LEFT && direction != RIGHT) {
-                    direction = LEFT;
-                } else if (key == KeyEvent.VK_DOWN && direction != UP) {
-                    direction = DOWN;
-                } else if (key == KeyEvent.VK_UP && direction != DOWN) {
-                    direction = UP;
-                } else if (key == KeyEvent.VK_D && direction != LEFT) {
-                    direction = RIGHT;
-                } else if (key == KeyEvent.VK_A && direction != RIGHT) {
-                    direction = LEFT;
-                } else if (key == KeyEvent.VK_S && direction != UP) {
-                    direction = DOWN;
-                } else if (key == KeyEvent.VK_W && direction != DOWN) {
-                    direction = UP;
+            if (gameState == START) {
+                if (key == KeyEvent.VK_ENTER || key == KeyEvent.VK_SPACE) {
+                    startGame();
                 }
-            } else {
+            } else if (gameState == PLAYING) {
+                if (key == KeyEvent.VK_RIGHT && direction != LEFT) {
+                    nextDirection = RIGHT;
+                } else if (key == KeyEvent.VK_LEFT && direction != RIGHT) {
+                    nextDirection = LEFT;
+                } else if (key == KeyEvent.VK_DOWN && direction != UP) {
+                    nextDirection = DOWN;
+                } else if (key == KeyEvent.VK_UP && direction != DOWN) {
+                    nextDirection = UP;
+                } else if (key == KeyEvent.VK_D && direction != LEFT) {
+                    nextDirection = RIGHT;
+                } else if (key == KeyEvent.VK_A && direction != RIGHT) {
+                    nextDirection = LEFT;
+                } else if (key == KeyEvent.VK_S && direction != UP) {
+                    nextDirection = DOWN;
+                } else if (key == KeyEvent.VK_W && direction != DOWN) {
+                    nextDirection = UP;
+                }
+            } else if (gameState == GAME_OVER) {
                 if (key == KeyEvent.VK_R) {
                     reset();
                 }
@@ -181,6 +200,17 @@ public class SnakeGame {
             // background
             g.setColor(Color.DARK_GRAY);
             g.fillRect(0, 0, WIDTH, HEIGHT);
+            
+            if (gameState == START) {
+                // Draw start screen
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Arial", Font.BOLD, 40));
+                g.drawString("SNAKE", WIDTH / 2 - 80, HEIGHT / 2 - 40);
+                g.setFont(new Font("Arial", Font.PLAIN, 20));
+                g.drawString("Press ENTER to Start", WIDTH / 2 - 100, HEIGHT / 2 + 20);
+                return;
+            }
+            
             // grid
             g.setColor(Color.GRAY);
             for (int i = 0; i <= GRID_WIDTH; i++) {
@@ -194,19 +224,25 @@ public class SnakeGame {
             for (Point p : snake) {
                 g.fillRect(p.x * CELL_SIZE, p.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
             }
-            if (running) {
-                // draw food
-                g.setColor(Color.RED);
-                g.fillRect(food.x * CELL_SIZE, food.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-            } else {
-                g.setColor(Color.WHITE);
-                g.drawString("Game Over", WIDTH / 2 - 50, HEIGHT / 2 - 20);
-                g.drawString("Score: " + score, WIDTH / 2 - 50, HEIGHT / 2);
-                g.drawString("Press R to restart", WIDTH / 2 - 80, HEIGHT / 2 + 20);
-            }
-            // always draw score
+            // draw food
+            g.setColor(Color.RED);
+            g.fillRect(food.x * CELL_SIZE, food.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            
+            // score
             g.setColor(Color.WHITE);
             g.drawString("Score: " + score, 10, 20);
+            
+            if (gameState == GAME_OVER) {
+                // Draw game over overlay
+                g.setColor(new Color(0, 0, 0, 150));
+                g.fillRect(0, 0, WIDTH, HEIGHT);
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Arial", Font.BOLD, 40));
+                g.drawString("Game Over", WIDTH / 2 - 110, HEIGHT / 2 - 20);
+                g.setFont(new Font("Arial", Font.PLAIN, 20));
+                g.drawString("Score: " + score, WIDTH / 2 - 50, HEIGHT / 2 + 20);
+                g.drawString("Press R to Restart", WIDTH / 2 - 100, HEIGHT / 2 + 60);
+            }
         }
     }
 }
