@@ -6,3 +6,12 @@ Prompt 2:
 
  Prompt 3
  Make the snake move automatically using a Swing timer that ticks every 150 milliseconds. Add arrow key controls so the player can steer, but don't allow the snake to reverse direction. For now, have the snake wrap around the edges instead of dying. Make sure the panel can receive keyboard input.
+
+ Prompt 4
+ Add a food pellet that spawns at a random empty cell. When the snake eats it, grow by one segment and spawn new food. Add collision detection: hitting a wall or the snake's own body should end the game, stop movement, and show a "Game Over" message with the final score. Display the current score in the top-left corner during play. When the game is over, let the player press R to reset everything and play again.
+
+ Prompt 5 
+ I encountered that the keyPressed section starting on line 113, does not work properly. When I press R to reset the game it doesn't do anything. In addition could you add W(up), A(left), S(down),D(right) in addition the controls that already exist?
+
+ Prompt 6 
+ I still cant seem to get the game started. It loads up on the game over screen prompting to press R to restart but it doesn't do anything.
